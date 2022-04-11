@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
 import API from "../../api";
 import Logo from "../../assets/logo.jpg";
+import useLogin from "../../hooks/useLogin";
 import { ILogin } from "../../typings";
 import { toastOptions } from "../../utils/common";
 
@@ -88,16 +89,17 @@ const LoginDiv = styled("div")`
 
 export default function Login() {
 	const navigate = useNavigate();
+	const { loginUser, loginDispatch } = useLogin();
 	const [loginForm, setLoginForm] = useState<ILogin>({
 		username: "",
 		password: "",
 	});
 
 	useEffect(() => {
-		if (localStorage.getItem("login-user")) {
+		if (loginUser) {
 			navigate("/");
 		}
-	}, []);
+	}, [loginUser]);
 
 	const handleSubmit = async (
 		e: React.FormEvent<HTMLFormElement>
@@ -106,12 +108,12 @@ export default function Login() {
 		if (!handleValidation()) return;
 
 		const { username, password } = loginForm;
-		const { data } = await API.login({ username, password });
-		if (data.status === "success") {
-			localStorage.setItem("login-user", JSON.stringify(data.data));
-			navigate("/");
+		const res = await API.login({ username, password });
+
+		if (res.status === "success") {
+			loginDispatch("login", res.data);
 		} else {
-			toast.error(data.message, toastOptions);
+			toast.error(res.message, toastOptions);
 		}
 	};
 
@@ -121,11 +123,12 @@ export default function Login() {
 
 	function handleValidation() {
 		const { username, password } = loginForm;
+
 		if (password === "") {
-			toast.error("Password is required.", toastOptions);
+			toast.error("请输入密码！", toastOptions);
 			return false;
 		} else if (username === "") {
-			toast.error("Username is required.", toastOptions);
+			toast.error("请输入用户名！", toastOptions);
 			return false;
 		}
 		return true;

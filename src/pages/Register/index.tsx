@@ -4,6 +4,7 @@ import { ToastContainer, toast, ToastOptions } from "react-toastify";
 import styled from "styled-components";
 import API from "../../api";
 import Logo from "../../assets/logo.jpg";
+import useLogin from "../../hooks/useLogin";
 import { IRegister } from "../../typings";
 import { toastOptions } from "../../utils/common";
 
@@ -87,43 +88,41 @@ const RegisterDiv = styled("div")`
 
 export default function Register() {
 	const navigate = useNavigate();
-
-	useEffect(() => {
-		if (localStorage.getItem("login-user")) {
-			navigate("/");
-		}
-	}, []);
-
 	const [registerForm, setRegisterForm] = useState<IRegister>({
 		username: "",
-		email: "",
 		password: "",
 		confirmPassword: "",
 	});
+	const { loginUser, loginDispatch } = useLogin();
 
-	const handleSubmit = async (
+	useEffect(() => {
+		if (loginUser) {
+			navigate("/");
+		}
+	}, [loginUser]);
+
+	async function handleSubmit(
 		e: React.FormEvent<HTMLFormElement>
-	): Promise<void> => {
+	): Promise<void> {
 		e.preventDefault();
 		if (!handleValidation()) return;
 
-		const { username, email, password } = registerForm;
-		const { data } = await API.register({ username, email, password });
+		const { username, password } = registerForm;
+		const res = await API.register({ username, password });
 
-		if (data.status === "success") {
-			localStorage.setItem("login-user", JSON.stringify(data.data));
-			navigate("/avatar");
+		if (res.status === "success") {
+			loginDispatch("login", res.data);
 		} else {
-			toast.error(data.message, toastOptions);
+			toast.error(res.message, toastOptions);
 		}
-	};
+	}
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+	function handleChange(e: React.ChangeEvent<HTMLInputElement>): void {
 		setRegisterForm({ ...registerForm, [e.target.name]: e.target.value });
-	};
+	}
 
 	function handleValidation() {
-		const { username, email, password, confirmPassword } = registerForm;
+		const { username, password, confirmPassword } = registerForm;
 		if (password !== confirmPassword) {
 			toast.error(
 				"The confirm password should same as the password.",
@@ -154,12 +153,7 @@ export default function Register() {
 						placeholder="UserName"
 						onChange={(e) => handleChange(e)}
 					/>
-					<input
-						type="email"
-						name="email"
-						placeholder="Email"
-						onChange={(e) => handleChange(e)}
-					/>
+
 					<input
 						type="password"
 						name="password"

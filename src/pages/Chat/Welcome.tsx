@@ -20,15 +20,15 @@ const WelcomeDiv = styled("div")`
 `;
 
 interface IProps {
-	currentUser: IUser;
+	loginUser: IUser;
 }
 
-export default function Welcome({ currentUser }: IProps) {
+export default function Welcome({ loginUser }: IProps) {
 	return (
 		<WelcomeDiv>
 			<img src={Logo} alt="logo" />
 			<h1>
-				Welcome, <span>{currentUser?.username}!</span>
+				Welcome, <span>{loginUser?.username}!</span>
 			</h1>
 			<h3>Please elect a chat to start messaging!</h3>
 		</WelcomeDiv>

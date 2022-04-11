@@ -5,7 +5,7 @@ import styled from "styled-components";
 import API from "../../api";
 import { Buffer } from "buffer";
 import Loader from "../../assets/loader.gif";
-import { IUser } from "../../typings";
+import { IUser, IAvatar } from "../../typings";
 import { toast, ToastContainer } from "react-toastify";
 import { toastOptions } from "../../utils/common";
 
@@ -92,13 +92,13 @@ export default function AvatarPicker() {
 			localStorage.getItem("login-user")!
 		);
 		await API.test();
-		const { data } = await API.setAvatar(user._id, {
+		const res = await API.setAvatar(user._id, {
 			avatarImage: avatarGallery![selectedAvatar],
 		});
 
-		if (data.status === "success") {
+		if (res.status === "success") {
 			user.isAvatarImageSet = true;
-			user.avatarImage = data.data.avatarImage;
+			user.avatarImage = res.data.avatarImage;
 			localStorage.setItem("login-user", JSON.stringify(user));
 			navigate("/");
 		} else {

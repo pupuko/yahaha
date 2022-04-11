@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { IUser } from "../../typings";
 import Logo from "../../assets/logo.jpg";
 import Logout from "../../components/Logout";
+import ContactItem from "./ContactItem";
 
 const ContactsDiv = styled("div")`
 	position: relative;
@@ -30,32 +31,6 @@ const ContactsDiv = styled("div")`
 		align-items: center;
 		overflow: auto;
 		gap: 0.8rem;
-		.user {
-			display: flex;
-			align-items: center;
-			padding: 0.4rem;
-			min-height: 5rem;
-			width: 90%;
-			gap: 1rem;
-			background-color: #ffffff39;
-			border-radius: 0.2rem;
-			transition: 0.2s ease-in-out;
-			cursor: pointer;
-			.user-avatar {
-				img {
-					height: 3rem;
-				}
-			}
-			.user-username {
-				h3 {
-					color: white;
-				}
-			}
-
-			&.selected {
-				background: #9186f3;
-			}
-		}
 
 		&::-webkit-scrollbar {
 			width: 0.2rem;
@@ -94,22 +69,17 @@ const ContactsDiv = styled("div")`
 
 interface IContacts {
 	contacts: IUser[];
-	currentUser?: IUser;
+	loginUser?: IUser;
+	currentChat?: IUser;
 	setCurrentChat: (u: IUser) => void;
 }
 
 export default function Contacts({
 	contacts,
-	currentUser,
+	loginUser,
+	currentChat,
 	setCurrentChat,
 }: IContacts) {
-	const [selectedChat, setSelectedChat] = useState<number>();
-	// function changeCurrentChat(index, contact) {}
-	function changeCurrentChat(user: IUser, index: number) {
-		setCurrentChat(user);
-		setSelectedChat(index);
-	}
-
 	return (
 		<ContactsDiv>
 			<div className="brand">
@@ -118,36 +88,25 @@ export default function Contacts({
 			</div>
 
 			<div className="contacts-div">
-				{contacts.map((user, index) => (
-					<div
-						key={index}
-						className={`user ${
-							index === selectedChat ? "selected" : ""
-						}`}
-						onClick={() => changeCurrentChat(user, index)}
-					>
-						<div className="user-avatar">
-							<img
-								src={`data:image/svg+xml;base64,${user.avatarImage}`}
-								alt="avatar"
-							/>
-						</div>
-						<div className="user-username">
-							<h3>{user.username}</h3>
-						</div>
-					</div>
+				{contacts.map((user) => (
+					<ContactItem
+						key={user._id}
+						user={user}
+						currentChat={currentChat}
+						setCurrentChat={setCurrentChat}
+					/>
 				))}
 			</div>
 
 			<div className="current-user">
 				<div className="user-avatar">
 					<img
-						src={`data:image/svg+xml;base64,${currentUser?.avatarImage}`}
+						src={`data:image/svg+xml;base64,${loginUser?.avatarImage}`}
 						alt="avatar"
 					/>
 				</div>
 				<div className="user-username">
-					<h2>{currentUser?.username}</h2>
+					<h2>{loginUser?.username}</h2>
 				</div>
 				<Logout />
 			</div>

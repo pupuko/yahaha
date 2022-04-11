@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { BiPowerOff } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
+import io from "socket.io-client";
+import { IUser } from "../typings";
+import { WsEmitEnum } from "../typings/websocket";
+import useLogin from "../hooks/useLogin";
 
 const LogoutDiv = styled("div")`
 	position: relative;
@@ -21,14 +25,16 @@ const LogoutDiv = styled("div")`
 `;
 
 export default function Logout() {
-	const navigate = useNavigate();
-	function handleClick() {
-		localStorage.clear();
-		navigate("/login");
+	const { loginUser, loginDispatch, socket } = useLogin();
+
+	function logoutClick() {
+		loginDispatch("logout");
+		socket.emit(WsEmitEnum.LOGOUT, loginUser?._id);
 	}
+
 	return (
 		<LogoutDiv>
-			<BiPowerOff onClick={handleClick} />
+			<BiPowerOff onClick={logoutClick} />
 		</LogoutDiv>
 	);
 }

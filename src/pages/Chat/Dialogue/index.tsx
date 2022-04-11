@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { Socket } from "socket.io-client";
 import styled from "styled-components";
 import API from "../../../api";
 import { IMessage, IUser } from "../../../typings";
+import { WsEmitEnum, WsOnEnum } from "../../../typings/websocket";
 import ChatInput from "./ChatInput";
 import MessageList from "./MessageList";
 
@@ -39,17 +41,17 @@ const DialogueDiv = styled("div")`
 `;
 
 interface IProps {
-	currentUser: IUser;
+	loginUser: IUser;
 	currentChat: IUser;
-	socket: any;
+	socket: Socket;
 }
 
-export default function Dialogue({ currentUser, currentChat, socket }: IProps) {
+export default function Dialogue({ loginUser, currentChat, socket }: IProps) {
 	const [messageList, setMessageList] = useState<IMessage[]>([]);
 
 	useEffect(() => {
-		if (socket.current) {
-			socket.current.on("message-receive", (message: any) => {
+		if (socket) {
+			socket.on(WsOnEnum.MESSAGE_RECEIVED, (message: any) => {
 				setMessageList((messageList) => [
 					...messageList,
 					{ fromSelf: false, message },
@@ -63,23 +65,23 @@ export default function Dialogue({ currentUser, currentChat, socket }: IProps) {
 	}, [currentChat]);
 
 	async function getMessageList() {
-		const { data } = await API.getAllMessage({
-			from: currentUser._id,
+		const res = await API.getAllMessage({
+			from: loginUser._id,
 			to: currentChat._id,
 		});
-		setMessageList(data.data);
+		setMessageList(res.data);
 	}
 
 	async function sendMessage(message: string) {
-		const { data } = await API.sendMessage({
-			from: currentUser._id,
+		await API.sendMessage({
+			from: loginUser._id,
 			to: currentChat._id,
 			message,
 		});
 
-		socket.current.emit("send-message", {
+		socket.emit(WsEmitEnum.SEND_MESSAGE, {
 			to: currentChat._id,
-			from: currentUser._id,
+			from: loginUser._id,
 			message,
 		});
 
@@ -87,7 +89,7 @@ export default function Dialogue({ currentUser, currentChat, socket }: IProps) {
 		_messages.push({
 			fromSelf: true,
 			message,
-			from: currentUser._id,
+			from: loginUser._id,
 			to: currentChat._id,
 		});
 		setMessageList(_messages);
