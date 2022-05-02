@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ToastContainer, toast, ToastOptions } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import styled from "styled-components";
 import API from "../../api";
 import Logo from "../../assets/logo.jpg";
 import useLogin from "../../hooks/useLogin";
 import { IRegister } from "../../typings";
 import { toastOptions } from "../../utils/common";
+import { urlToFile } from "../../utils/fileConvert";
 
 const RegisterDiv = styled("div")`
 	position: relative;
@@ -96,6 +97,7 @@ export default function Register() {
 	const { loginUser, loginDispatch } = useLogin();
 
 	useEffect(() => {
+		urlToFile(Logo).then((res) => console.log(res));
 		if (loginUser) {
 			navigate("/");
 		}

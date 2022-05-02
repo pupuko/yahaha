@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/yahaha/static/css/main.f1237bda.css",
+    "main.js": "/yahaha/static/js/main.ce79eaae.js",
+    "static/media/loader.gif": "/yahaha/static/media/loader.b40fc3d91ff1f4db53e2.gif",
+    "static/media/logo.jpg": "/yahaha/static/media/logo.f2e0d7712fe15edd79a5.jpg",
+    "index.html": "/yahaha/index.html",
+    "main.f1237bda.css.map": "/yahaha/static/css/main.f1237bda.css.map",
+    "main.ce79eaae.js.map": "/yahaha/static/js/main.ce79eaae.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f1237bda.css",
+    "static/js/main.ce79eaae.js"
+  ]
+}
