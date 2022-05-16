@@ -13,6 +13,7 @@
 		"axios": "^0.26.1",
 		"buffer": "^6.0.3",
 		"cors": "^2.8.5",
+		"draft-js": "^0.11.7",
 		"emoji-picker-react": "^3.5.1",
 		"express": "^4.17.3",
 		"http-proxy-middleware": "^2.0.4",
@@ -52,6 +53,7 @@
 		]
 	},
 	"devDependencies": {
+		"@types/draft-js": "^0.11.9",
 		"@types/styled-components": "^5.1.24"
 	},
 	"homepage": "./"
